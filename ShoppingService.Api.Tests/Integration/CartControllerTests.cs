@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
-using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingService.Api;
+using Xunit;
 
 namespace ShoppingService.Api.Tests.Integration
 {

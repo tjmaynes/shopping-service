@@ -11,8 +11,7 @@ namespace ShoppingService.Api.Controllers
     public class CartController : ControllerBase
     {
         private readonly ICartService _service;
-
-        public CartController(ICartService service)
+       public CartController(ICartService service)
         {
             _service = service;
         }
@@ -22,7 +21,7 @@ namespace ShoppingService.Api.Controllers
         // [ProducesResponseType(typeof(IEnumerable<CartItem>), Status200OK)]
         public async Task<ActionResult<IEnumerable<CartItem>>> Get()
         {
-            var items = await _service.GetAllItems();
+            var items = await _service.GetAllItemsFromCart();
             return Ok(items);
         }
 
@@ -30,7 +29,7 @@ namespace ShoppingService.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CartItem>> GetById(Guid id)
         {
-            var item = await _service.GetById(id);
+            var item = await _service.GetItemById(id);
 
             if (item == null) {
                 return NotFound();
@@ -47,7 +46,7 @@ namespace ShoppingService.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var item = await _service.Add(value);
+            var item = await _service.AddItemToCart(value);
             return CreatedAtAction(nameof(Get), new { id = item.Id }, item);
         }
 
@@ -62,12 +61,12 @@ namespace ShoppingService.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Guid>> Delete(Guid id)
         {
-            var existingItem = await _service.GetById(id);
+            var existingItem = await _service.GetItemById(id);
             if (existingItem == null) {
                 return NotFound();
             }
 
-            var removedGuid = _service.Remove(id);
+            var removedGuid = _service.RemoveItemFromCart(id);
             return Ok(removedGuid);
         }
     }
