@@ -6,6 +6,8 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System.Linq;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Infrastructure.Data.Clients
 {
@@ -22,52 +24,52 @@ namespace ShoppingService.Infrastructure.Data.Clients
             _documentClient = documentClient ?? throw new ArgumentNullException(nameof(documentClient));
         }
 
-        public async Task<Database> CreateDatabaseAsync(RequestOptions options = null) =>
-            await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseName }, options);
+        public TryOptionAsync<ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null) =>
+            TryOptionAsync(async () => await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseName }, options));
 
-        public async Task<Document> CreateDocumentAsync(T item, RequestOptions options = null,
-            bool disableAutomaticIdGeneration = false,
+        public TryOptionAsync<ResourceResponse<Document>> CreateDocumentAsync(T item, RequestOptions options = null,
+            bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken)) =>
+            TryOptionAsync(async () => await _documentClient.CreateDocumentAsync(
+                UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName), item, options,
+                disableAutomaticIdGeneration, cancellationToken
+            ));
+
+        public TryOptionAsync<IEnumerable<T>> GetDocumentsAsync(int itemCountLimit = 200,
             CancellationToken cancellationToken = default(CancellationToken)) =>
-                await _documentClient.CreateDocumentAsync(
-                    UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName), item, options,
-                    disableAutomaticIdGeneration, cancellationToken
-                );
+            TryOptionAsync(async () => {
+                IDocumentQuery<Document> query = _documentClient.CreateDocumentQuery<Document>(
+                    UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName),
+                    new FeedOptions { MaxItemCount = itemCountLimit }
+                ).AsDocumentQuery();
 
-        public async Task<IEnumerable<T>> GetDocumentsAsync(int itemCountLimit = 200,
-            CancellationToken cancellationToken = default(CancellationToken))
-        {
-            IDocumentQuery<Document> query = _documentClient.CreateDocumentQuery<Document>(
-                UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName),
-                new FeedOptions { MaxItemCount = itemCountLimit }
-            ).AsDocumentQuery();
+                List<T> items = new List<T>();
+                while (query.HasMoreResults)
+                {
+                    FeedResponse<T> response = await query.ExecuteNextAsync<T>(cancellationToken);
+                    items.AddRange(response);
+                }
+                return items as IEnumerable<T>;
+            });
 
-            List<T> items = new List<T>();
-            while (query.HasMoreResults)
-            {
-                FeedResponse<T> response = await query.ExecuteNextAsync<T>(cancellationToken);
-                items.AddRange(response);
-            }
-
-            return items;
-        }
-
-        public async Task<Document> GetDocumentByIdAsync(string documentId, RequestOptions options = null,
-             CancellationToken cancellationToken = default(CancellationToken)) =>
-             await _documentClient.ReadDocumentAsync(
-                 UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
-                 options, cancellationToken
-             );
-
-        public async Task<Document> ReplaceDocumentAsync(string documentId, object document, RequestOptions options = null,
-            CancellationToken cancellationToken = default(CancellationToken)) =>
-            await _documentClient.ReplaceDocumentAsync(
-                UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId), document, options,
-                cancellationToken);
-
-        public async Task<Document> DeleteDocumentAsync(string documentId, RequestOptions options = null,
-            CancellationToken cancellationToken = default(CancellationToken)) =>
-            await _documentClient.DeleteDocumentAsync(
+        public TryOptionAsync<ResourceResponse<Document>> GetDocumentByIdAsync(string documentId,
+            RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
+            TryOptionAsync(async () => await _documentClient.ReadDocumentAsync(
                 UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
-                options, cancellationToken);
+                options, cancellationToken
+            ));
+
+        public TryOptionAsync<ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document,
+            RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
+            TryOptionAsync(async () => await _documentClient.ReplaceDocumentAsync(
+                UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
+                document, options, cancellationToken
+            ));
+
+        public TryOptionAsync<ResourceResponse<Document>> DeleteDocumentAsync(string documentId,
+            RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
+            TryOptionAsync(async () => await _documentClient.DeleteDocumentAsync(
+                UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
+                options, cancellationToken
+            ));
     }
 }

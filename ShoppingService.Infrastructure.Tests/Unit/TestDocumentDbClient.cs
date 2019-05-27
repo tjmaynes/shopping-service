@@ -14,6 +14,8 @@ using ShoppingService.Infrastructure.Tests.Fixtures;
 using ShoppingService.Infrastructure.Tests.Helpers;
 using Xunit;
 using Moq;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Infrastructure.Tests.Unit
 {
@@ -46,7 +48,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             string collectionName, IDocumentClient documentClient, string paramName)
         {
             var except = Assert.Throws<ArgumentNullException>(() =>
-                new DocumentDbClient<Document>(databaseName, collectionName, documentClient));
+                new DocumentDbClient<object>(databaseName, collectionName, documentClient));
             Assert.Equal(paramName, except.ParamName);
         }
 
@@ -60,7 +62,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 .ReturnsAsync(response);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.CreateDatabaseAsync();
+            var result = await match(sut.CreateDatabaseAsync(),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
 
             documentClientMock.Verify(
                 mock => mock.CreateDatabaseIfNotExistsAsync(
@@ -70,24 +76,27 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(response, result);
+            Assert.Equal("Success!", result);
         }
 
         [Fact]
         public async Task CreateDocumentAsync_WhenCalled_ShouldEventually_CreateNewDocumentUsingDocumentClient()
         {
             var item = new { ID = Guid.NewGuid(), FirstName = "some-first-name", LastName = "some-last-name" };
-            var response = DocumentsClientHelpers.CreateDocumentResponse(item);
-
+            var expected = DocumentsClientHelpers.CreateDocumentResponse(item);
             var documentClientMock = new Mock<IDocumentClient>();
             documentClientMock.Setup(mock => mock.CreateDocumentAsync(
                 It.IsAny<Uri>(), It.IsAny<object>(), null, false,
                 It.IsAny<CancellationToken>())
-            ).ReturnsAsync(response);
+            ).ReturnsAsync(expected);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.CreateDocumentAsync(item);
-
+            var result = await match(sut.CreateDocumentAsync(item),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
+ 
             documentClientMock.Verify(
                 mock => mock.CreateDocumentAsync(
                     It.Is<Uri>(uri =>
@@ -100,7 +109,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(response, result);
+            Assert.Equal("Success!", result);
         }
 
         [Fact]
@@ -122,7 +131,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 .Returns(documentQueryMock.Object);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.GetDocumentsAsync();
+            var result = await match(sut.GetDocumentsAsync(),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
 
             documentQueryMock.Verify(
                 mock => mock.ExecuteNextAsync<object>(default(CancellationToken)),
@@ -138,7 +151,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(expected, result);
+            Assert.Equal("Success!", result);
         }
 
         [Fact]
@@ -152,7 +165,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 .ReturnsAsync(expected);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.GetDocumentByIdAsync(id.ToString());
+            var result = await match(sut.GetDocumentByIdAsync(id.ToString()),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
 
             documentClientMock.Verify(
                 mock => mock.ReadDocumentAsync(
@@ -164,7 +181,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(expected, result);
+            Assert.Equal("Success!", result);
         }
 
         [Fact]
@@ -181,7 +198,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 .ReturnsAsync(expected);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.ReplaceDocumentAsync(id.ToString(), item);
+            var result = await match(sut.ReplaceDocumentAsync(id.ToString(), item),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
 
             documentClientMock.Verify(
                 mock => mock.ReplaceDocumentAsync(
@@ -194,7 +215,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(expected, result);
+            Assert.Equal("Success!", result);
         }
 
         [Fact]
@@ -207,7 +228,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 .ReturnsAsync(expected);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
-            var result = await sut.DeleteDocumentAsync(id.ToString());
+            var result = await match(sut.DeleteDocumentAsync(id.ToString()),
+                Some: _ => "Success!",
+                None: () => "Fail",
+                Fail: ex => ex.Message
+            );
 
             documentClientMock.Verify(
                 mock => mock.DeleteDocumentAsync(
@@ -219,7 +244,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
                 Times.Once()
             );
 
-            Assert.Equal(expected, result);
+            Assert.Equal("Success!", result);
         }
     }
 }

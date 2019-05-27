@@ -11,23 +11,31 @@ namespace ShoppingService.Infrastructure.Tests.Helpers
     {
         public static ResourceResponse<Document> CreateDocumentResponse(Object item)
         {
-            var documentJson = JsonConvert.SerializeObject(item);
-            return CreateResourceResponse(documentJson);
+            var document = CreateDocumentFromObject(item);
+            return new ResourceResponse<Document>(document);
         }
 
         public static ResourceResponse<Document> CreateDocumentsResponse(IEnumerable<object> items)
         {
-            var documentJson = JsonConvert.SerializeObject(items);
-            return CreateResourceResponse(documentJson);
+            var document = CreateDocumentFromObjects(items);
+            return new ResourceResponse<Document>(document);
         }
 
-        private static ResourceResponse<Document> CreateResourceResponse(string jsonData) {
-            var jsonReader = new JsonTextReader(new StringReader(jsonData));
+        public static Document CreateDocumentFromObjects(IEnumerable<object> items) {
+            var json = JsonConvert.SerializeObject(items);
+            return CreateDocumentFromJSON(json);
+        }
 
+        public static Document CreateDocumentFromObject(object item) {
+            var json = JsonConvert.SerializeObject(item);
+            return CreateDocumentFromJSON(json);
+        }
+
+        public static Document CreateDocumentFromJSON(string json) {
+            var jsonReader = new JsonTextReader(new StringReader(json));
             var document = new Document();
             document.LoadFrom(jsonReader);
-
-            return new ResourceResponse<Document>(document);
+            return document;
         }
     }
 }

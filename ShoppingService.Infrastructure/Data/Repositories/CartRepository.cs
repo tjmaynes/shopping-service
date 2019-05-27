@@ -3,9 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
 using ShoppingService.Infrastructure.Data.Clients;
+using Newtonsoft.Json;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Infrastructure.Data.Repositories
 {
@@ -15,27 +19,45 @@ namespace ShoppingService.Infrastructure.Data.Repositories
 
         public CartRepository(IDocumentDbClient<CartItem> dbClient)
         {
-            _dbClient = dbClient;
+            _dbClient = dbClient ?? throw new ArgumentNullException(nameof(dbClient));
         }
 
-        public async Task<IEnumerable<CartItem>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
+        public EitherAsync<string, IEnumerable<CartItem>> GetAll(int countLimit = 200) =>
+            match(_dbClient.GetDocumentsAsync(countLimit),
+                Some: items => Right<string, IEnumerable<CartItem>>(items),
+                None: ()    => Left<string, IEnumerable<CartItem>>("No items were found."),
+                Fail: ex    => Left<string, IEnumerable<CartItem>>(ex.Message)
+            ).ToAsync();
 
-        public async Task<CartItem> Add(CartItem newItem)
-        {
-            throw new NotImplementedException();
-        }
+        public EitherAsync<string, CartItem> Add(CartItem item) =>
+            match(_dbClient.CreateDocumentAsync(item),
+               Some: document => Right<string, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
+               None: ()       => Right<string, CartItem>(item),
+               Fail: ex       => Left<string, CartItem>(ex.Message)
+            ).ToAsync();
 
-        public async Task<CartItem> GetById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        public EitherAsync<string, CartItem> GetById(Guid id) =>
+            match(_dbClient.GetDocumentByIdAsync(id.ToString()),
+               Some: document => Right<string, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
+               None: ()       => Left<string, CartItem>("Item not found."),
+               Fail: ex       => Left<string, CartItem>(ex.Message)
+            ).ToAsync();
 
-        public async Task<Guid> Remove(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        public EitherAsync<string, CartItem> Update(CartItem item) =>
+            match(_dbClient.ReplaceDocumentAsync(item.Id.ToString(), item),
+                Some: document => Right<string, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
+                None: ()       => Right<string, CartItem>(item),
+                Fail: ex       => Left<string, CartItem>(ex.Message)
+            ).ToAsync();
+
+        public EitherAsync<string, Guid> Remove(Guid id) =>
+            match(_dbClient.DeleteDocumentAsync(id.ToString()),
+                Some: _  => Right<string, Guid>(id),
+                None: () => Left<string, Guid>("Item not found."),
+                Fail: ex => Left<string, Guid>(ex.Message)
+            ).ToAsync();
+
+        private CartItem ConvertDocumentIntoCartItem(Document document) =>
+            JsonConvert.DeserializeObject<CartItem>(document.ToString());
     }
 }

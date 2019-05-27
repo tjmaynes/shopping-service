@@ -1,14 +1,17 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Core.Common
 {
     public interface IRepository<T>
     {
-        Task<IEnumerable<T>> GetAll();
-        Task<T> Add(T newItem);
-        Task<T> GetById(Guid id);
-        Task<Guid> Remove(Guid id);
+        EitherAsync<string, IEnumerable<T>> GetAll(int countLimit = 200);
+        EitherAsync<string, T> Add(T newItem);
+        EitherAsync<string, T> GetById(Guid id);
+        EitherAsync<string, T> Update(T updatedItem);
+        EitherAsync<string, Guid> Remove(Guid id);
     }
 }
