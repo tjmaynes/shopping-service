@@ -1,18 +1,17 @@
 # Shopping Service
 
-> Learning .NET Core 2.2 by building a shopping application.
-> - ASP.NET Core 2.2 (backend)
-> - React 0.17 (web/client) soon...
+> Learning ASP.NET Core 2.2 by building a shopping application.
 
 ## Requirements
 
+- [Docker](https://www.docker.com/get-started)
 - [.NET SDK 2.2](https://dotnet.microsoft.com/download/dotnet-core/2.2)
 
 ## Usage
 
 To run all tests, run the following command:
 ```bash
-dotnet test ShoppingService.Api.Tests
+dotnet test
 ```
 
 To run the service api, run the following command:
