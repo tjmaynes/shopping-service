@@ -48,7 +48,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             string collectionName, IDocumentClient documentClient, string paramName)
         {
             var except = Assert.Throws<ArgumentNullException>(() =>
-                new DocumentDbClient<object>(databaseName, collectionName, documentClient));
+                new DocumentDbClient(databaseName, collectionName, documentClient));
             Assert.Equal(paramName, except.ParamName);
         }
 

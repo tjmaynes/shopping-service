@@ -11,7 +11,7 @@ using static LanguageExt.Prelude;
 
 namespace ShoppingService.Infrastructure.Data.Clients
 {
-    public class DocumentDbClient<T> : IDocumentDbClient<T>
+    public class DocumentDbClient : IDocumentDbClient
     {
         private readonly string _databaseName;
         private readonly string _collectionName;
@@ -27,14 +27,14 @@ namespace ShoppingService.Infrastructure.Data.Clients
         public TryOptionAsync<ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null) =>
             TryOptionAsync(async () => await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseName }, options));
 
-        public TryOptionAsync<ResourceResponse<Document>> CreateDocumentAsync(T item, RequestOptions options = null,
+        public TryOptionAsync<ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
             bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken)) =>
             TryOptionAsync(async () => await _documentClient.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName), item, options,
                 disableAutomaticIdGeneration, cancellationToken
             ));
 
-        public TryOptionAsync<IEnumerable<T>> GetDocumentsAsync(int itemCountLimit = 200,
+        public TryOptionAsync<IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
             CancellationToken cancellationToken = default(CancellationToken)) =>
             TryOptionAsync(async () => {
                 IDocumentQuery<Document> query = _documentClient.CreateDocumentQuery<Document>(
@@ -42,13 +42,13 @@ namespace ShoppingService.Infrastructure.Data.Clients
                     new FeedOptions { MaxItemCount = itemCountLimit }
                 ).AsDocumentQuery();
 
-                List<T> items = new List<T>();
+                var items = new List<object>();
                 while (query.HasMoreResults)
                 {
-                    FeedResponse<T> response = await query.ExecuteNextAsync<T>(cancellationToken);
+                    FeedResponse<object> response = await query.ExecuteNextAsync<object>(cancellationToken);
                     items.AddRange(response);
                 }
-                return items as IEnumerable<T>;
+                return items as IEnumerable<object>;
             });
 
         public TryOptionAsync<ResourceResponse<Document>> GetDocumentByIdAsync(string documentId,

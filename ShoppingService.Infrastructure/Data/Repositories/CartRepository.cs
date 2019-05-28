@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using ShoppingService.Core.Cart;
@@ -15,16 +16,16 @@ namespace ShoppingService.Infrastructure.Data.Repositories
 {
     public class CartRepository : IRepository<CartItem>
     {
-        private readonly IDocumentDbClient<CartItem> _dbClient;
+        private readonly IDocumentDbClient _dbClient;
 
-        public CartRepository(IDocumentDbClient<CartItem> dbClient)
+        public CartRepository(IDocumentDbClient dbClient)
         {
             _dbClient = dbClient ?? throw new ArgumentNullException(nameof(dbClient));
         }
 
         public EitherAsync<string, IEnumerable<CartItem>> GetAll(int countLimit = 200) =>
             match(_dbClient.GetDocumentsAsync(countLimit),
-                Some: items => Right<string, IEnumerable<CartItem>>(items),
+                Some: items => Right<string, IEnumerable<CartItem>>(items.Select(item => (CartItem)item)),
                 None: ()    => Left<string, IEnumerable<CartItem>>("No items were found."),
                 Fail: ex    => Left<string, IEnumerable<CartItem>>(ex.Message)
             ).ToAsync();
@@ -56,7 +57,6 @@ namespace ShoppingService.Infrastructure.Data.Repositories
                 None: () => Left<string, Guid>("Item not found."),
                 Fail: ex => Left<string, Guid>(ex.Message)
             ).ToAsync();
-
         private CartItem ConvertDocumentIntoCartItem(Document document) =>
             JsonConvert.DeserializeObject<CartItem>(document.ToString());
     }

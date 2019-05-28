@@ -22,14 +22,14 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         [Fact]
         public void CartRepository_WithNoNullArguments_ShouldReturnDocumentDbClient()
         {
-            var dbClientMock = new Mock<IDocumentDbClient<CartItem>>();
+            var dbClientMock = new Mock<IDocumentDbClient>();
             var sut = new CartRepository(dbClientMock.Object);
             Assert.NotNull(sut);
         }
 
         [Theory]
         [InlineData(null, "dbClient")]
-        public void CartRepository_WithNullArgument_ShouldThrowNullException(IDocumentDbClient<CartItem> dbClient, string paramName)
+        public void CartRepository_WithNullArgument_ShouldThrowNullException(IDocumentDbClient dbClient, string paramName)
         {
             var except = Assert.Throws<ArgumentNullException>(() => new CartRepository(dbClient));
             Assert.Equal(paramName, except.ParamName);
@@ -40,12 +40,9 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expected = new List<CartItem>();
             expected.Add(new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
-            var response = TryOptionAsync(async () => {
-                await Task.Delay(100);
-                return expected as IEnumerable<CartItem>;
-            });
+            var response = TryOptionAsync<IEnumerable<object>>(async () => await Task.Run(() => expected as IEnumerable<object>));
 
-            var documentDbClient = new Mock<IDocumentDbClient<CartItem>>();
+            var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.GetDocumentsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(response);
 
@@ -70,11 +67,10 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             CartItem expected = new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                await Task.Delay(100);
-                return DocumentsClientHelpers.CreateDocumentResponse(expected);
+                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
             });
 
-            var documentDbClient = new Mock<IDocumentDbClient<CartItem>>();
+            var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.CreateDocumentAsync(
                 It.IsAny<CartItem>(), null, It.IsAny<bool>(), It.IsAny<CancellationToken>())
             ).Returns(response);
@@ -102,11 +98,10 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
             var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                await Task.Delay(100);
-                return DocumentsClientHelpers.CreateDocumentResponse(expected);
+                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
             });
 
-            var documentDbClient = new Mock<IDocumentDbClient<CartItem>>();
+            var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.ReplaceDocumentAsync(It.IsAny<string>(), It.IsAny<CartItem>(), null, It.IsAny<CancellationToken>()))
                 .Returns(response);
 
@@ -132,12 +127,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-            
             var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                await Task.Delay(100);
-                return DocumentsClientHelpers.CreateDocumentResponse(expected);
+                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
             });
-            var documentDbClient = new Mock<IDocumentDbClient<CartItem>>();
+
+            var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.ReplaceDocumentAsync(
                 It.IsAny<string>(), It.IsAny<CartItem>(), null, It.IsAny<CancellationToken>())
             ).Returns(response);
@@ -164,12 +158,11 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-
             var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                await Task.Delay(100);
-                return DocumentsClientHelpers.CreateDocumentResponse(expected);
+                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
             });
-            var documentDbClient = new Mock<IDocumentDbClient<CartItem>>();
+
+            var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.DeleteDocumentAsync(
                 It.IsAny<string>(), null, It.IsAny<CancellationToken>())
             ).Returns(response);

@@ -18,10 +18,8 @@ namespace ShoppingService.Infrastructure.Tests.Fixtures
             DocumentUri = UriFactory.CreateDocumentUri(DatabaseName, CollectionName, DocumentId);
         }
 
-        public IDocumentDbClient<object> Initialize(IDocumentClient documentClient)
-        {
-            return new DocumentDbClient<object>(DatabaseName, CollectionName, documentClient);
-        }
+        public IDocumentDbClient Initialize(IDocumentClient documentClient) =>
+            new DocumentDbClient(DatabaseName, CollectionName, documentClient);
 
         public void Dispose() { }
     }
