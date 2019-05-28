@@ -55,22 +55,21 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         [Fact]
         public async Task CreateDatabaseAsync_WhenCalled_ShouldEventually_CreateDatabaseUsingDocumentClient()
         {
-            var aDatabase = new Database { Id = _fixture.DatabaseName };
-            var response = new ResourceResponse<Database>(aDatabase);
+            var expected = new Database { Id = _fixture.DatabaseName };
+            var response = new ResourceResponse<Database>(expected);
             var documentClientMock = new Mock<IDocumentClient>();
             documentClientMock.Setup(mock => mock.CreateDatabaseIfNotExistsAsync(It.IsAny<Database>(), null))
                 .ReturnsAsync(response);
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.CreateDatabaseAsync(),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
 
             documentClientMock.Verify(
                 mock => mock.CreateDatabaseIfNotExistsAsync(
-                    It.Is<Database>(database => database.Id == aDatabase.Id),
+                    It.Is<Database>(database => database.Id == expected.Id),
                     null
                ),
                 Times.Once()
@@ -92,9 +91,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.CreateDocumentAsync(item),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
  
             documentClientMock.Verify(
@@ -132,9 +130,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.GetDocumentsAsync(),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
 
             documentQueryMock.Verify(
@@ -166,9 +163,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.GetDocumentByIdAsync(id.ToString()),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
 
             documentClientMock.Verify(
@@ -199,9 +195,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.ReplaceDocumentAsync(id.ToString(), item),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
 
             documentClientMock.Verify(
@@ -229,9 +224,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
 
             var sut = _fixture.Initialize(documentClientMock.Object);
             var result = await match(sut.DeleteDocumentAsync(id.ToString()),
-                Some: _ => "Success!",
-                None: () => "Fail",
-                Fail: ex => ex.Message
+                Right: _ => "Success!",
+                Left: ex => ex.Message
             );
 
             documentClientMock.Verify(

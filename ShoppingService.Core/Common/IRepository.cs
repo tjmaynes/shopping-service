@@ -8,10 +8,10 @@ namespace ShoppingService.Core.Common
 {
     public interface IRepository<T>
     {
-        EitherAsync<string, IEnumerable<T>> GetAll(int countLimit = 200);
-        EitherAsync<string, T> Add(T newItem);
-        EitherAsync<string, T> GetById(Guid id);
-        EitherAsync<string, T> Update(T updatedItem);
-        EitherAsync<string, Guid> Remove(Guid id);
+        EitherAsync<Exception, IEnumerable<T>> GetAll(int countLimit = 200);
+        EitherAsync<Exception, T> Add(T newItem);
+        EitherAsync<Exception, T> GetById(Guid id);
+        EitherAsync<Exception, T> Update(T updatedItem);
+        EitherAsync<Exception, Guid> Remove(Guid id);
     }
 }

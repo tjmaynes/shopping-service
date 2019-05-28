@@ -40,15 +40,14 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expected = new List<CartItem>();
             expected.Add(new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
-            var response = TryOptionAsync<IEnumerable<object>>(async () => await Task.Run(() => expected as IEnumerable<object>));
 
             var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.GetDocumentsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .Returns(response);
+                .Returns(expected);
 
             var countLimit = 100;
             var sut = new CartRepository(documentDbClient.Object);
-            await match<string, IEnumerable<CartItem>>(sut.GetAll(countLimit),
+            await match<Exception, IEnumerable<CartItem>>(sut.GetAll(countLimit),
                 Right: r  => Assert.Equal(expected, r),
                 Left:  _  => Assert.False(true, "Shouldn't get here!")
             );
@@ -65,10 +64,8 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         [Fact]
         public async Task Add_WhenCalled_ShouldEventually_StoreCartItem()
         {
-            CartItem expected = new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-            var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
-            });
+            var expected = new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
+            var response = RightAsync<Exception, ResourceResponse<Document>>(DocumentsClientHelpers.CreateDocumentResponse(expected));
 
             var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.CreateDocumentAsync(
@@ -76,7 +73,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             ).Returns(response);
 
             var sut = new CartRepository(documentDbClient.Object);
-            await match<string, CartItem>(sut.Add(expected),
+            await match<Exception, CartItem>(sut.Add(expected),
                 Right: r  => Assert.Equal(expected, r),
                 Left:  _  => Assert.False(true, "Shouldn't get here!")
             );
@@ -97,16 +94,14 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-            var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
-            });
+            var response = RightAsync<Exception, ResourceResponse<Document>>(DocumentsClientHelpers.CreateDocumentResponse(expected));
 
             var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.ReplaceDocumentAsync(It.IsAny<string>(), It.IsAny<CartItem>(), null, It.IsAny<CancellationToken>()))
                 .Returns(response);
 
             var sut = new CartRepository(documentDbClient.Object);
-            await match<string, CartItem>(sut.Update(expected),
+            await match<Exception, CartItem>(sut.Update(expected),
                 Right: r  => Assert.Equal(expected, r),
                 Left:  _  => Assert.False(true, "Shouldn't get here!")
             );
@@ -127,9 +122,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-            var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
-            });
+            var response = RightAsync<Exception, ResourceResponse<Document>>(DocumentsClientHelpers.CreateDocumentResponse(expected));
 
             var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.ReplaceDocumentAsync(
@@ -137,7 +130,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             ).Returns(response);
 
             var sut = new CartRepository(documentDbClient.Object);
-            await match<string, CartItem>(sut.Update(expected),
+            await match<Exception, CartItem>(sut.Update(expected),
                 Right: r  => Assert.Equal(expected, r),
                 Left:  _  => Assert.False(true, "Shouldn't get here!")
             );
@@ -158,9 +151,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
         {
             var expectedId = Guid.NewGuid();
             var expected = new CartItem(expectedId, "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow);
-            var response = TryOptionAsync<ResourceResponse<Document>>(async () => {
-                return await Task.Run(() => DocumentsClientHelpers.CreateDocumentResponse(expected));
-            });
+            var response = RightAsync<Exception, ResourceResponse<Document>>(DocumentsClientHelpers.CreateDocumentResponse(expected));
 
             var documentDbClient = new Mock<IDocumentDbClient>();
             documentDbClient.Setup(x => x.DeleteDocumentAsync(
@@ -168,7 +159,7 @@ namespace ShoppingService.Infrastructure.Tests.Unit
             ).Returns(response);
 
             var sut = new CartRepository(documentDbClient.Object);
-            await match<string, Guid>(sut.Remove(expectedId),
+            await match<Exception, Guid>(sut.Remove(expectedId),
                 Right: r  => Assert.Equal(expectedId, r),
                 Left:  _  => Assert.False(true, "Shouldn't get here!")
             );

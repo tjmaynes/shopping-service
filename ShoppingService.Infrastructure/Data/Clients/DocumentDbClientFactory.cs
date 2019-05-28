@@ -4,7 +4,7 @@ using Microsoft.Azure.Documents.Client;
 
 namespace ShoppingService.Infrastructure.Data.Clients {
     public class DocumentDbClientFactory {
-        public static IDocumentDbClient Create(Uri serviceEndpoint, string authKey, string databaseName, string collectionName) {
+        public static IDocumentDbClient CreateAndConnect(Uri serviceEndpoint, string authKey, string databaseName, string collectionName) {
             var documentClient = new DocumentClient(serviceEndpoint, authKey);
             documentClient.OpenAsync().Wait();
 

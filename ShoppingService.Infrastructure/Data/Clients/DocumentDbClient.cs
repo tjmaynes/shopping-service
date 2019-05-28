@@ -24,19 +24,29 @@ namespace ShoppingService.Infrastructure.Data.Clients
             _documentClient = documentClient ?? throw new ArgumentNullException(nameof(documentClient));
         }
 
-        public TryOptionAsync<ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null) =>
-            TryOptionAsync(async () => await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseName }, options));
+        public EitherAsync<Exception, ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null) =>
+            match(TryOptionAsync(async () => await _documentClient.CreateDatabaseIfNotExistsAsync(new Database { Id = _databaseName }, options)),
+                Some: database => Right<Exception, ResourceResponse<Database>>(database),
+                None: () => Left<Exception, ResourceResponse<Database>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, ResourceResponse<Database>>(ex)
+            ).ToAsync();
 
-        public TryOptionAsync<ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
+        public EitherAsync<Exception, ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
             bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken)) =>
-            TryOptionAsync(async () => await _documentClient.CreateDocumentAsync(
+            match(TryOptionAsync(async () => await _documentClient.CreateDocumentAsync(
                 UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName), item, options,
                 disableAutomaticIdGeneration, cancellationToken
-            ));
+            )),
+                Some: document => Right<Exception, ResourceResponse<Document>>(document),
+                None: () => Left<Exception, ResourceResponse<Document>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, ResourceResponse<Document>>(ex)
+            ).ToAsync();
 
-        public TryOptionAsync<IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
-            CancellationToken cancellationToken = default(CancellationToken)) =>
-            TryOptionAsync(async () => {
+        public EitherAsync<Exception, IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var operation = TryOptionAsync(async () =>
+            {
                 IDocumentQuery<Document> query = _documentClient.CreateDocumentQuery<Document>(
                     UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName),
                     new FeedOptions { MaxItemCount = itemCountLimit }
@@ -51,25 +61,44 @@ namespace ShoppingService.Infrastructure.Data.Clients
                 return items as IEnumerable<object>;
             });
 
-        public TryOptionAsync<ResourceResponse<Document>> GetDocumentByIdAsync(string documentId,
+            return match(operation,
+                Some: objects => Right<Exception, IEnumerable<object>>(objects),
+                None: () => Left<Exception, IEnumerable<object>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, IEnumerable<object>>(ex)
+            ).ToAsync();
+        }
+
+        public EitherAsync<Exception, ResourceResponse<Document>> GetDocumentByIdAsync(string documentId,
             RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
-            TryOptionAsync(async () => await _documentClient.ReadDocumentAsync(
+            match(TryOptionAsync(async () => await _documentClient.ReadDocumentAsync(
                 UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
                 options, cancellationToken
-            ));
+            )),
+                Some: document => Right<Exception, ResourceResponse<Document>>(document),
+                None: () => Left<Exception, ResourceResponse<Document>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, ResourceResponse<Document>>(ex)
+            ).ToAsync();
 
-        public TryOptionAsync<ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document,
+        public EitherAsync<Exception, ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document,
             RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
-            TryOptionAsync(async () => await _documentClient.ReplaceDocumentAsync(
+            match(TryOptionAsync(async () => await _documentClient.ReplaceDocumentAsync(
                 UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
                 document, options, cancellationToken
-            ));
+            )),
+                Some: updatedDocument => Right<Exception, ResourceResponse<Document>>(updatedDocument),
+                None: () => Left<Exception, ResourceResponse<Document>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, ResourceResponse<Document>>(ex)
+            ).ToAsync();
 
-        public TryOptionAsync<ResourceResponse<Document>> DeleteDocumentAsync(string documentId,
+        public EitherAsync<Exception, ResourceResponse<Document>> DeleteDocumentAsync(string documentId,
             RequestOptions options = null, CancellationToken cancellationToken = default(CancellationToken)) =>
-            TryOptionAsync(async () => await _documentClient.DeleteDocumentAsync(
+            match(TryOptionAsync(async () => await _documentClient.DeleteDocumentAsync(
                 UriFactory.CreateDocumentUri(_databaseName, _collectionName, documentId),
                 options, cancellationToken
-            ));
+            )),
+                Some: document => Right<Exception, ResourceResponse<Document>>(document),
+                None: () => Left<Exception, ResourceResponse<Document>>(new KeyNotFoundException()),
+                Fail: ex => Left<Exception, ResourceResponse<Document>>(ex)
+            ).ToAsync();
     }
 }

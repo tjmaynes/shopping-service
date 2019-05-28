@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
+    <UserSecretsId>3C6226A8-A7DC-4A6C-BDCE-34104E893C21</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,10 +12,14 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
+    <PackageReference Include="FluentValidation" Version="8.4.0" />
+      <PackageReference Include="Moq" Version="4.11.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ShoppingService.Infrastructure\ShoppingService.Infrastructure.csproj" />
     <ProjectReference Include="..\ShoppingService.Api\ShoppingService.Api.csproj" />
+    <ProjectReference Include="..\ShoppingService.Core\ShoppingService.Core.csproj" />
   </ItemGroup>
 
 </Project>

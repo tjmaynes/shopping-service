@@ -11,16 +11,16 @@ namespace ShoppingService.Infrastructure.Data.Clients
 {
     public interface IDocumentDbClient
     {
-        TryOptionAsync<ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null);
-        TryOptionAsync<ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
+        EitherAsync<Exception, ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null);
+        EitherAsync<Exception, ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
             bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken));
-        TryOptionAsync<IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
+        EitherAsync<Exception, IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
             CancellationToken cancellationToken = default(CancellationToken));
-        TryOptionAsync<ResourceResponse<Document>> GetDocumentByIdAsync(string documentId, RequestOptions options = null,
+        EitherAsync<Exception, ResourceResponse<Document>> GetDocumentByIdAsync(string documentId, RequestOptions options = null,
             CancellationToken cancellationToken = default(CancellationToken));
-        TryOptionAsync<ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document, RequestOptions options = null,
+        EitherAsync<Exception, ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document, RequestOptions options = null,
             CancellationToken cancellationToken = default(CancellationToken));
-        TryOptionAsync<ResourceResponse<Document>> DeleteDocumentAsync(string documentId, RequestOptions options = null,
+        EitherAsync<Exception, ResourceResponse<Document>> DeleteDocumentAsync(string documentId, RequestOptions options = null,
             CancellationToken cancellationToken = default(CancellationToken));
     }
 }

@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ShoppingService.Api;
 using ShoppingService.Core.Cart;
+using ShoppingService.Core.Common;
+using ShoppingService.Infrastructure.Data.Repositories;
+using ShoppingService.Infrastructure.Data.Clients;
 
 namespace ShoppingService.Api.Tests.Integration
 {
@@ -13,40 +16,31 @@ namespace ShoppingService.Api.Tests.Integration
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
-            {
-                var serviceProvider = new ServiceCollection()
-                    .AddEntityFrameworkInMemoryDatabase()
-                    .BuildServiceProvider();
+            // builder.ConfigureServices(services =>
+            // {
+            //     var serviceProvider = new ServiceCollection()
+            //         .BuildServiceProvider();
 
-                services.AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("InMemoryAppDb");
-                    options.UseInternalServiceProvider(serviceProvider);
-                });
+            //     services.AddSingleton<IDocumentDbClient>(x => DocumentDbClientFactory.CreateAndConnect(
 
-                var sp = services.BuildServiceProvider();
+            //     ));
 
-                using (var scope = sp.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var appDb = scopedServices.GetRequiredService<AppDbContext>();
-                    var logger = scopedServices.GetRequiredService<ILogger<ShoppingServiceApiFactory<TStartup>>>();
-                    try
-                    {
-                        appDb.Database.EnsureCreated();
+            //     services.AddTransient<IRepository<CartItem>>(x => new CartRepository(
+            //         x.GetService<IDocumentDbClient>()
+            //     ));
 
-                        appDb.Cart.Add(new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
-                        appDb.Cart.Add(new CartItem(Guid.NewGuid(), "some-name-2", 2.99m, "some-manufacturer", DateTime.UtcNow));
+            //     var sp = services.BuildServiceProvider();
+            //     using (var scope = sp.CreateScope())
+            //     {
+            //         var scopedServices = scope.ServiceProvider;
+            //         var cartRepository = scopedServices.GetRequiredService<CartRepository>();
+            //         var logger = scopedServices.GetRequiredService<ILogger<ShoppingServiceApiFactory<TStartup>>>();
 
-                        appDb.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the database with test messages. Error: {ex.Message}");
-                    }
-                }
-            });
+            //         // cartRepository.EnsureExists();
+            //         cartRepository.Add(new CartItem(Guid.NewGuid(), "some-name-1", 45.99m, "some-manufacturer", DateTime.UtcNow));
+            //         cartRepository.Add(new CartItem(Guid.NewGuid(), "some-name-2", 2.99m, "some-manufacturer", DateTime.UtcNow));
+            //     }
+            // });
         }
     }
 }

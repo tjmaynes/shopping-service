@@ -1,73 +1,59 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingService.Core.Cart;
+using ShoppingService.Api.Services;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/cart")]
     [ApiController]
     public class CartController : ControllerBase
     {
-        private readonly ICartService _service;
+       private readonly ICartService _service;
        public CartController(ICartService service)
         {
             _service = service;
         }
 
-        // GET api/shopping/cart
         [HttpGet]
-        // [ProducesResponseType(typeof(IEnumerable<CartItem>), Status200OK)]
-        public async Task<ActionResult<IEnumerable<CartItem>>> Get()
-        {
-            var items = await _service.GetAllItemsFromCart();
-            return Ok(items);
-        }
+        public async Task<ActionResult<IEnumerable<CartItem>>> Get() =>
+            await match(_service.GetItemsFromCart(),
+                Right: items => Ok(items),
+                Left: error => StatusCode(error.StatusCode, error.Messages)
+            );
 
-        // GET api/shopping/cart/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CartItem>> GetById(Guid id)
-        {
-            var item = await _service.GetItemById(id);
+        public async Task<ActionResult<CartItem>> GetById(Guid id) =>
+            await match(_service.GetItemById(id),
+                Right: item => Ok(item),
+                Left: error => StatusCode(error.StatusCode, error.Messages)
+            );
 
-            if (item == null) {
-                return NotFound();
-            }
-
-            return Ok(item);
-        }
-
-        // POST api/shopping/cart
         [HttpPost]
-        public async Task<ActionResult<CartItem>> Post([FromBody] CartItem value)
-        {
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+        public async Task<ActionResult<CartItem>> Post([FromBody] CartItem newItem) =>
+            await match(_service.AddItemToCart(newItem),
+                Right: item => StatusCode(201, item),
+                Left: error => StatusCode(error.StatusCode, error.Messages)
+            );
 
-            var item = await _service.AddItemToCart(value);
-            return CreatedAtAction(nameof(Get), new { id = item.Id }, item);
-        }
-
-        // PUT api/shopping/cart/5
         [HttpPut("{id}")]
-        public void Put(Guid id, [FromBody] string value)
-        {
+        public async Task<ActionResult<CartItem>> Put(Guid id, [FromBody] CartItem updatedItem) =>
+            await match(_service.UpdateItemInCart(updatedItem),
+                Right: item => Ok(item),
+                Left: error => StatusCode(error.StatusCode, error.Messages)
+            );
 
-        }
-
-        // DELETE api/shopping/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Guid>> Delete(Guid id)
-        {
-            var existingItem = await _service.GetItemById(id);
-            if (existingItem == null) {
-                return NotFound();
-            }
-
-            var removedGuid = _service.RemoveItemFromCart(id);
-            return Ok(removedGuid);
-        }
+        public async Task<ActionResult<Guid>> Delete(Guid id) =>
+            await match(_service.RemoveItemFromCart(id),
+                Right: removedId => StatusCode(200, removedId),
+                Left: error => StatusCode(error.StatusCode, error.Messages)
+            );
     }
 }
