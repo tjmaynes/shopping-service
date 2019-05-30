@@ -9,12 +9,12 @@ using static LanguageExt.Prelude;
 
 namespace ShoppingService.Infrastructure.Data.Clients
 {
-    public interface IDocumentDbClient
+    public interface IDocumentDbClient<T>
     {
         EitherAsync<Exception, ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null);
-        EitherAsync<Exception, ResourceResponse<Document>> CreateDocumentAsync(object item, RequestOptions options = null,
+        EitherAsync<Exception, ResourceResponse<Document>> CreateDocumentAsync(T item, RequestOptions options = null,
             bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken));
-        EitherAsync<Exception, IEnumerable<object>> GetDocumentsAsync(int itemCountLimit = 200,
+        EitherAsync<Exception, IEnumerable<T>> GetDocumentsAsync(int itemCountLimit = 200,
             CancellationToken cancellationToken = default(CancellationToken));
         EitherAsync<Exception, ResourceResponse<Document>> GetDocumentByIdAsync(string documentId, RequestOptions options = null,
             CancellationToken cancellationToken = default(CancellationToken));

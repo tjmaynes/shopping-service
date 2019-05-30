@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingService.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingService.Core", "ShoppingService.Core\ShoppingService.Core.csproj", "{ED41C649-9B94-4839-9E38-2C189F556910}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingService.Core.Tests", "ShoppingService.Core.Tests\ShoppingService.Core.Tests.csproj", "{4360D84B-08A4-40F0-A2D9-D53C336E013A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,5 +100,17 @@ Global
 		{F34136B6-9F36-474C-A841-84C245964974}.Release|x64.Build.0 = Release|Any CPU
 		{F34136B6-9F36-474C-A841-84C245964974}.Release|x86.ActiveCfg = Release|Any CPU
 		{F34136B6-9F36-474C-A841-84C245964974}.Release|x86.Build.0 = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|x64.Build.0 = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Debug|x86.Build.0 = Debug|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|x64.ActiveCfg = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|x64.Build.0 = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|x86.ActiveCfg = Release|Any CPU
+		{4360D84B-08A4-40F0-A2D9-D53C336E013A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

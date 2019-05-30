@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
-using ShoppingService.Api.Services;
-using ShoppingService.Api.Tests.Data;
+using ShoppingService.Core.Tests.Data;
 using Xunit;
 using Moq;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace ShoppingService.Api.Tests.Unit
+namespace ShoppingService.Core.Tests.Unit
 {
     public class TestCartService : IClassFixture<CartServiceFixture>
     {

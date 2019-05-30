@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,9 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ShoppingService.Api.Options;
 using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
 using ShoppingService.Infrastructure.Data.Repositories;
+using ShoppingService.Infrastructure.Data.Clients;
 
 namespace ShoppingService.Api
 {
@@ -29,6 +30,17 @@ namespace ShoppingService.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            var connectionStringsOptions =
+                Configuration.GetSection("ConnectionStrings").Get<ConnectionStringOptions>();
+            var (serviceEndpoint, authKey) = connectionStringsOptions;
+            var cosmosDbOptions = Configuration.GetSection("DocumentDb").Get<DocumentDbOptions>();
+            var (databaseName, collectionNames) = cosmosDbOptions;
+
+           // Cart Endpoint
+            services.AddSingleton<IDocumentDbClient<CartItem>>(DocumentDbClientFactory<CartItem>.CreateAndConnect(
+                serviceEndpoint, authKey, databaseName, collectionNames["Cart"]
+            ));
+            services.AddScoped<ICartService, CartService>();
             services.AddScoped<IRepository<CartItem>, CartRepository>();
         }
 

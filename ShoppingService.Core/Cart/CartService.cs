@@ -2,13 +2,12 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
 using FluentValidation;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace ShoppingService.Api.Services
+namespace ShoppingService.Core.Cart
 {
     public class CartService : ICartService
     {

@@ -1,10 +1,14 @@
 using System;
 using ShoppingService.Core.Common;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace ShoppingService.Core.Cart
 {
-    public class CartItem : Entity, IEquatable<CartItem>
+    public class CartItem : Record<CartItem>
     {
+        public Guid Id { get; internal set; }
+        public DateTime CreatedAt { get; internal set; }
         public string Name { get; private set; }
         public decimal Price { get; private set; }
         public string Manufacturer { get; private set; }
@@ -17,22 +21,5 @@ namespace ShoppingService.Core.Cart
             Manufacturer = manufacturer;
             CreatedAt = createdAt;
         }
-
-        public override int GetHashCode() => (Id.GetHashCode() ^ CreatedAt.GetHashCode());
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType()) return false;
-            return Equals((CartItem)obj);
-        }
-
-        public bool Equals(CartItem other) => (
-            Id == other.Id && CreatedAt == other.CreatedAt &&
-            Name == other.Name && Price == other.Price &&
-            Manufacturer == other.Manufacturer
-        );
-
-        public static bool operator ==(CartItem cartItem1, CartItem cartItem2) => cartItem1.Equals(cartItem2);
-        public static bool operator !=(CartItem cartItem1, CartItem cartItem2) => !cartItem1.Equals(cartItem2);
     }
 }

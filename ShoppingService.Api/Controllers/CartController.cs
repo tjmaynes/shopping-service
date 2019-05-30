@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingService.Core.Cart;
-using ShoppingService.Api.Services;
 using LanguageExt;
 using static LanguageExt.Prelude;
 

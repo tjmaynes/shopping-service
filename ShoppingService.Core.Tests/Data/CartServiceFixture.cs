@@ -1,9 +1,8 @@
 using System;
 using ShoppingService.Core.Common;
 using ShoppingService.Core.Cart;
-using ShoppingService.Api.Services;
 
-namespace ShoppingService.Api.Tests.Data
+namespace ShoppingService.Core.Tests.Data
 {
     public class CartServiceFixture
     {

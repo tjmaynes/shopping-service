@@ -6,7 +6,7 @@ using ShoppingService.Core.Cart;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace ShoppingService.Api.Tests.Data {
+namespace ShoppingService.Core.Tests.Data {
     public class CartRepositoryFake : IRepository<CartItem> {
         private readonly IEnumerable<CartItem> _items;
 

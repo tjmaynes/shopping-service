@@ -16,9 +16,9 @@ namespace ShoppingService.Infrastructure.Data.Repositories
 {
     public class CartRepository : IRepository<CartItem>
     {
-        private readonly IDocumentDbClient _dbClient;
+        private readonly IDocumentDbClient<CartItem> _dbClient;
 
-        public CartRepository(IDocumentDbClient dbClient)
+        public CartRepository(IDocumentDbClient<CartItem> dbClient)
         {
             _dbClient = dbClient ?? throw new ArgumentNullException(nameof(dbClient));
         }
