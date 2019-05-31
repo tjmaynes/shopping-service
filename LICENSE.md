@@ -1,34 +1,3 @@
-# Shopping Service
-
-> Learning .NET Core 2.2 by building a shopping service.
-
-## Requirements
-
-- [Docker](https://www.docker.com/get-started)
-- [.NET SDK 2.2](https://dotnet.microsoft.com/download/dotnet-core/2.2)
-
-## Usage
-
-To run all tests, run the following command:
-```bash
-dotnet test
-```
-
-To run the service api, run the following command:
-```bash
-dotnet run --project ShoppingService.Api
-```
-
-## Useful Links
-
-- [Azure CosmosDB docs](https://docs.microsoft.com/en-us/azure/cosmos-db/)
-- [Partitioned Repository sample project](https://github.com/Azure-Samples/PartitionedRepository)
-- [Language-Ext lib](https://github.com/louthy/language-ext)
-- [Integration testing ASP.NET Core WebAPI tutorial](https://fullstackmark.com/post/20/painless-integration-testing-with-aspnet-core-web-api)
-- [Integration testing ASP.NET Core WebAPI docs](https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-2.2)
-
-## License
-```
 The MIT License (MIT)
 
 Copyright (c) 2018 TJ Maynes
@@ -50,4 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-```
