@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using ShoppingService.Api.Factories;
@@ -9,12 +10,13 @@ namespace ShoppingService.Api
     {
         public static void Main(string[] args)
         {
+            var configuration = AppConfigurationBuilder.Initialize(
+                Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                "settings.json"
+            ).Build();
+
             WebApplicationBuilderFactory
-                .Initialize(
-                    args,
-                    Directory.GetCurrentDirectory(),
-                    "appsettings.json"
-                )
+                .Initialize(args, configuration)
                 .Build()
                 .Run();
         }

@@ -1,0 +1,8 @@
+bin/
+obj/
+README.markdown
+Dockerfile
+.vscode/
+.git/
+.gitignore
+.DS_Store

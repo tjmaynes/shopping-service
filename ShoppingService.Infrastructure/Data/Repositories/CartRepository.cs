@@ -1,10 +1,6 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
 using ShoppingService.Infrastructure.Data.Clients;
@@ -23,37 +19,46 @@ namespace ShoppingService.Infrastructure.Data.Repositories
             _dbClient = dbClient ?? throw new ArgumentNullException(nameof(dbClient));
         }
 
-        public EitherAsync<Exception, IEnumerable<CartItem>> GetAll(int countLimit = 200) =>
-            match(_dbClient.GetDocumentsAsync(countLimit),
-                Right: items => Right<Exception, IEnumerable<CartItem>>(items.Select(item => (CartItem)item)),
-                Left: ex => Left<Exception, IEnumerable<CartItem>>(ex)
+        public EitherAsync<Exception, Option<PagedResult<CartItem>>> GetAll(
+            int pageNumber = 0, int pageSize = 200
+        ) =>
+            match(_dbClient.GetDocumentsAsync(pageNumber, pageSize),
+                Some: items => {
+                    var totalCount = items.Count();
+                    var totalPages = (long)Math.Ceiling((double)(totalCount / pageSize));
+                    var collection = new PagedResult<CartItem>(items, totalCount, totalPages, pageNumber + 1);
+                    return Right<Exception, Option<PagedResult<CartItem>>>(Some(collection));
+                },
+                None: () => Right<Exception, Option<PagedResult<CartItem>>>(Some(PagedResult<CartItem>.CreateEmptyResult())),
+                Fail: ex => Left<Exception, Option<PagedResult<CartItem>>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, CartItem> Add(CartItem item) =>
-            match(_dbClient.CreateDocumentAsync(item),
-               Right: document => Right<Exception, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
-               Left: ex => Left<Exception, CartItem>(ex)
+        public EitherAsync<Exception, Option<CartItem>> Add(CartItem newItem) =>
+            match(_dbClient.CreateDocumentAsync(newItem),
+                Some: item => Right<Exception, Option<CartItem>>(Some(item)),
+                None: () => Right<Exception, Option<CartItem>>(Some(newItem)),
+                Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, CartItem> GetById(Guid id) =>
-            match(_dbClient.GetDocumentByIdAsync(id.ToString()),
-               Right: document => Right<Exception, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
-               Left: ex => Left<Exception, CartItem>(ex)
+        public EitherAsync<Exception, Option<CartItem>> GetById(string id) =>
+            match(_dbClient.GetDocumentByIdAsync((item => item.Id == id)),
+                Some: item => Right<Exception, Option<CartItem>>(Some(item)),
+                None: () => Right<Exception, Option<CartItem>>(None),
+                Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, CartItem> Update(CartItem item) =>
-            match(_dbClient.ReplaceDocumentAsync(item.Id.ToString(), item),
-                Right: document => Right<Exception, CartItem>(ConvertDocumentIntoCartItem(document.Resource)),
-                Left: ex => Left<Exception, CartItem>(ex)
+        public EitherAsync<Exception, Option<CartItem>> Update(CartItem updatedItem) =>
+            match(_dbClient.ReplaceDocumentAsync((item => item.Id == updatedItem.Id), updatedItem),
+                Some: item => Right<Exception, Option<CartItem>>(Some(item)),
+                None: () => Right<Exception, Option<CartItem>>(None),
+                Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, Guid> Remove(Guid id) =>
-            match(_dbClient.DeleteDocumentAsync(id.ToString()),
-                Right: _ => Right<Exception, Guid>(id),
-                Left: ex => Left<Exception, Guid>(ex)
+        public EitherAsync<Exception, Option<CartItem>> Remove(string id) =>
+            match(_dbClient.DeleteDocumentAsync((item => item.Id == id)),
+                Some: item => Right<Exception, Option<CartItem>>(Some(item)),
+                None: () => Right<Exception, Option<CartItem>>(None),
+                Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
-
-        private CartItem ConvertDocumentIntoCartItem(Document document) =>
-            JsonConvert.DeserializeObject<CartItem>(document.ToString());
     }
 }

@@ -1,9 +1,5 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
@@ -11,16 +7,10 @@ namespace ShoppingService.Infrastructure.Data.Clients
 {
     public interface IDocumentDbClient<T>
     {
-        EitherAsync<Exception, ResourceResponse<Database>> CreateDatabaseAsync(RequestOptions options = null);
-        EitherAsync<Exception, ResourceResponse<Document>> CreateDocumentAsync(T item, RequestOptions options = null,
-            bool disableAutomaticIdGeneration = false, CancellationToken cancellationToken = default(CancellationToken));
-        EitherAsync<Exception, IEnumerable<T>> GetDocumentsAsync(int itemCountLimit = 200,
-            CancellationToken cancellationToken = default(CancellationToken));
-        EitherAsync<Exception, ResourceResponse<Document>> GetDocumentByIdAsync(string documentId, RequestOptions options = null,
-            CancellationToken cancellationToken = default(CancellationToken));
-        EitherAsync<Exception, ResourceResponse<Document>> ReplaceDocumentAsync(string documentId, object document, RequestOptions options = null,
-            CancellationToken cancellationToken = default(CancellationToken));
-        EitherAsync<Exception, ResourceResponse<Document>> DeleteDocumentAsync(string documentId, RequestOptions options = null,
-            CancellationToken cancellationToken = default(CancellationToken));
+        TryOptionAsync<T> CreateDocumentAsync(T item);
+        TryOptionAsync<List<T>> GetDocumentsAsync(int pageNumber = 0, int pageSize = 50);
+        TryOptionAsync<T> GetDocumentByIdAsync(Func<T, bool> compareFunc);
+        TryOptionAsync<T> ReplaceDocumentAsync(Func<T, bool> compareFunc, T document);
+        TryOptionAsync<T> DeleteDocumentAsync(Func<T, bool> compareFunc);
     }
 }

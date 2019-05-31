@@ -19,6 +19,14 @@ To run the service api, run the following command:
 dotnet run --project ShoppingService.Api
 ```
 
+To run a local MongoDB database, run the following command:
+```bash
+(docker rm -f shopping-service-db || true) && docker run -d \
+    --name shopping-service-db \
+    -p 27017:27017 \
+    mongo:4.1
+```
+
 ## Useful Links
 
 - [Azure CosmosDB docs](https://docs.microsoft.com/en-us/azure/cosmos-db/)

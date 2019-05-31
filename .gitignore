@@ -350,3 +350,9 @@ MigrationBackup/
 
 # Editor
 .vscode/
+
+# MacOS stuff
+.DS_Store
+
+# Output directory
+dist/

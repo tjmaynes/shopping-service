@@ -1,0 +1,16 @@
+{
+  "DocumentDb": {
+    "DatabaseName": "shopping",
+    "ConnectionString": "mongodb://localhost:27017",
+    "CollectionNames": {
+        "Cart": "cartItems"
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}

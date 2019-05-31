@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using ShoppingService.Api.Factories;
 using Xunit;
 
@@ -15,11 +16,13 @@ namespace ShoppingService.Api.Tests.Integration
         private readonly TestServer _server;
 
         public TestShoppingServiceApi() {
-            _server = new TestServer(WebApplicationBuilderFactory.Initialize(
-                Environment.GetCommandLineArgs(),
+            var configuration = AppConfigurationBuilder.Initialize(
                 Directory.GetCurrentDirectory(),
-                "testsettings.json"
-            ));
+                "settings.json"
+            ).Build();
+
+            _server = new TestServer(WebApplicationBuilderFactory.Initialize(
+                Environment.GetCommandLineArgs(), configuration));
         }
 
         [Theory]
