@@ -1,28 +1,36 @@
 using System;
-using System.Threading.Tasks;
+using System.IO;
 using System.Net.Http;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingService.Api;
+using Microsoft.AspNetCore.TestHost;
+using ShoppingService.Api.Factories;
 using Xunit;
 
 namespace ShoppingService.Api.Tests.Integration
 {
-    public class TestShoppingServiceApi: IClassFixture<ShoppingServiceApiFactory<Startup>>
+    public class TestShoppingServiceApi
     {
-        private readonly HttpClient _client;
+        private readonly TestServer _server;
 
-        public TestShoppingServiceApi(ShoppingServiceApiFactory<Startup> factory) {
-            _client = factory.CreateClient();
+        public TestShoppingServiceApi() {
+            _server = new TestServer(WebApplicationBuilderFactory.Initialize(
+                Environment.GetCommandLineArgs(),
+                Directory.GetCurrentDirectory(),
+                "testsettings.json"
+            ));
         }
 
         [Theory]
         [InlineData("/api/shopping/cart")]
         public async Task Get_WhenCalled_ReturnsOkResult(string url)
         {
-            // var httpResponse = await _client.GetAsync(url);
-            // httpResponse.EnsureSuccessStatusCode();
+            var client = _server.CreateClient();
+            var httpResponse = await client.GetAsync(url);
+            httpResponse.EnsureSuccessStatusCode();
 
-            // Assert.Equal("application/json; charset=utf-8", httpResponse.Content.Headers.ContentType.ToString());
+            Assert.Equal("application/json; charset=utf-8", httpResponse.Content.Headers.ContentType.ToString());
         }
     }
 }

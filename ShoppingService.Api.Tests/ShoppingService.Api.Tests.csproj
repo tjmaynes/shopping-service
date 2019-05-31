@@ -21,4 +21,10 @@
     <ProjectReference Include="..\ShoppingService.Core\ShoppingService.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="testsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

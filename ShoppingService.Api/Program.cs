@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using ShoppingService.Api.Factories;
 
 namespace ShoppingService.Api
 {
@@ -14,11 +9,14 @@ namespace ShoppingService.Api
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            WebApplicationBuilderFactory
+                .Initialize(
+                    args,
+                    Directory.GetCurrentDirectory(),
+                    "appsettings.json"
+                )
+                .Build()
+                .Run();
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
     }
 }

@@ -1,6 +1,6 @@
 # Shopping Service
 
-> Learning ASP.NET Core 2.2 by building a shopping application.
+> Learning .NET Core 2.2 by building a shopping service.
 
 ## Requirements
 
