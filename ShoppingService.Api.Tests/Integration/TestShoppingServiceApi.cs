@@ -16,9 +16,10 @@ namespace ShoppingService.Api.Tests.Integration
         private readonly TestServer _server;
 
         public TestShoppingServiceApi() {
+            var environment = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_ENVIRONMENT");
             var configuration = AppConfigurationBuilder.Initialize(
                 Directory.GetCurrentDirectory(),
-                "settings.json"
+                $"settings.{environment}.json"
             ).Build();
 
             _server = new TestServer(WebApplicationBuilderFactory.Initialize(
@@ -28,6 +29,17 @@ namespace ShoppingService.Api.Tests.Integration
         [Theory]
         [InlineData("/api/shopping/cart")]
         public async Task Get_WhenCalled_ReturnsOkResult(string url)
+        {
+            var client = _server.CreateClient();
+            var httpResponse = await client.GetAsync(url);
+            httpResponse.EnsureSuccessStatusCode();
+
+            Assert.Equal("application/json; charset=utf-8", httpResponse.Content.Headers.ContentType.ToString());
+        }
+
+        [Theory]
+        [InlineData("/api/shopping/cart")]
+        public async Task GetById_WhenCalled_ReturnsOkResult(string url)
         {
             var client = _server.CreateClient();
             var httpResponse = await client.GetAsync(url);

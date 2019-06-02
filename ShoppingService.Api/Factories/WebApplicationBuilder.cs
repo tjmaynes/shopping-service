@@ -18,6 +18,7 @@ namespace ShoppingService.Api.Factories
     {
         public static IWebHostBuilder Initialize(string[] args, IConfiguration configuration) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(configuration)
                 .ConfigureServices(services =>
                 {
                     services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

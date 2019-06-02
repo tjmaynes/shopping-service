@@ -22,8 +22,8 @@ namespace ShoppingService.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CartItem>>> Get() =>
-            await match(_service.GetItemsFromCart(),
+        public async Task<ActionResult<IEnumerable<CartItem>>> Get(int currentPage = 0, int pageSize = 40) =>
+            await match(_service.GetItemsFromCart(currentPage, pageSize),
                 Right: result => Ok(new Dictionary<string, PagedResult<CartItem>> {{ "data", result }}),
                 Left: error => StatusCode(ConvertErrorCode(error.ErrorCode), error.Message)
             );

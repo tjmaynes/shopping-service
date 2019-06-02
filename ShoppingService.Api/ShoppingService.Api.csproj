@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\ShoppingService.Api.Resources\settings.json" Link="settings.json" CopyToOutputDirectory="Always" />
-    <Content Include="..\ShoppingService.Api.Resources\settings.Development.json" Link="settings.Development.json" CopyToOutputDirectory="Always" />
+    <Content Include="..\ShoppingService.Api.Resources\settings.production.json" Link="settings.production.json" CopyToOutputDirectory="Always" />
+    <Content Include="..\ShoppingService.Api.Resources\settings.development.json" Link="settings.development.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

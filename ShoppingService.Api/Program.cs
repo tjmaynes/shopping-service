@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,9 +11,10 @@ namespace ShoppingService.Api
     {
         public static void Main(string[] args)
         {
+            var environment = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_ENVIRONMENT");
             var configuration = AppConfigurationBuilder.Initialize(
                 Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                "settings.json"
+                $"settings.{environment}.json"
             ).Build();
 
             WebApplicationBuilderFactory

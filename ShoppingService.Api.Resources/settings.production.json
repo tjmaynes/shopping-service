@@ -12,7 +12,7 @@
     "DatabaseName": "shopping",
     "ConnectionString": "mongodb://localhost:27017",
     "CollectionNames": {
-        "Cart": "cartItems"
+      "Cart": "cartItems"
     }
   },
   "Secrets": {

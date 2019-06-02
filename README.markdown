@@ -9,33 +9,58 @@
 
 ## Usage
 
-To run all tests, run the following command:
+To install project dependencies, run the following command:
 ```bash
-dotnet test
-```
-
-To run the service api, run the following command:
-```bash
-dotnet run --project ShoppingService.Api
+make install_dependencies
 ```
 
 To run a local MongoDB database, run the following command:
 ```bash
-(docker rm -f shopping-service-db || true) && docker run -d \
-    --name shopping-service-db \
-    -p 27017:27017 \
-    mongo:4.1
+make start_local_db
+```
+
+To run all tests locally, run the following command:
+```bash
+make local_test
+```
+
+To run the Shopping Service API, run the following command:
+```bash
+make run_service
+```
+
+To build the docker image, run the following command:
+```bash
+REGISTRY_USERNAME=<some-docker-registry-username> \
+TAG=<some-build-tag> \
+make build_image
+```
+
+To publish the docker image, run the following commands:
+```bash
+REGISTRY_USERNAME=<some-docker-registry-username> \
+REGISTRY_PASSWORD=<some-docker-registry-password> \
+TAG=<some-build-tag> \
+make push_image
+```
+
+To run the docker image, run the following command:
+```bash
+REGISTRY_USERNAME=<some-docker-registry-username> \
+SHOPPING_SERVICE_ENVIRONMENT=<some-service-environment> \
+TAG=<some-build-tag> \
+make run_image
 ```
 
 ## Useful Links
 
-- [Azure CosmosDB docs](https://docs.microsoft.com/en-us/azure/cosmos-db/)
 - [Partitioned Repository sample project](https://github.com/Azure-Samples/PartitionedRepository)
 - [Language-Ext lib](https://github.com/louthy/language-ext)
 - [Integration testing ASP.NET Core WebAPI tutorial](https://fullstackmark.com/post/20/painless-integration-testing-with-aspnet-core-web-api)
 - [Integration testing ASP.NET Core WebAPI docs](https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-2.2)
+- [Azure CosmosDB docs](https://docs.microsoft.com/en-us/azure/cosmos-db/)
 
-## License
+## LICENSE
 ```
 The MIT License (MIT)
 
