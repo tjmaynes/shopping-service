@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MongoDB.Driver;
-using ShoppingService.Core.Cart;
 using LanguageExt;
 using static LanguageExt.Prelude;
 

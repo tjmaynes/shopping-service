@@ -4,9 +4,9 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-    - bash: dotnet restore
+    - bash: make install_dependencies
       displayName: Install Dependencies
-    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[xunit*]*" --test-adapter-path:. --logger "xunit;LogFileName=TestResults.xml" --results-directory output
+    - bash: make test SHOPPING_SERVICE_DB_CONNECTION_STRING=$(SHOPPING_SERVICE_DB_CONNECTION_STRING) SHOPPING_SERVICE_ENVIRONMENT=production 
       displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
@@ -28,9 +28,9 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-    - bash: dotnet restore
+    - bash: make install_dependencies
       displayName: Install Dependencies
-    - bash: dotnet publish -c Release -o dist
+    - bash: make build_artifact
       displayName: Build Artifact
     - task: PublishPipelineArtifact@0
       displayName: Publish Artifact
