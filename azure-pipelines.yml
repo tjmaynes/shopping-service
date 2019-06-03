@@ -18,10 +18,10 @@ jobs:
         testResultsFiles: '**/TestResults.xml'
         mergeTestResults: true
     - task: PublishCodeCoverageResults@1
-      displayName: Publish Test Coverage
+      displayName: Publish Code Coverage
       inputs:
         codeCoverageTool: cobertura
-        summaryFileLocation: $(System.DefaultWorkingDirectory)/**/*.cobertura.xml
+        summaryFileLocation: $(System.DefaultWorkingDirectory)/ShoppingService.Api.Tests/coverage.cobertura.xml
 - job: BuildAndPublishArtifact
   dependsOn: RunTests
   displayName: Build and Publish Artifact
