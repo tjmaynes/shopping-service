@@ -6,11 +6,17 @@ jobs:
   steps:
     - bash: dotnet restore
       displayName: Install Dependencies
-    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger "trx;LogFileName=test_results.trx" --results-directory output
       displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
         SHOPPING_SERVICE_DB_CONNECTION_STRING: $(SHOPPING_SERVICE_DB_CONNECTION_STRING)
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'XUnit'
+        testResultsFiles: '**/test_results.trx'
+        mergeTestResults: true
     - task: PublishCodeCoverageResults@1
       displayName: Publish Test Coverage
       inputs:

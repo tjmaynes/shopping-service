@@ -357,5 +357,7 @@ MigrationBackup/
 # Output directory
 dist/
 
-# Test Coverage
-*.cobertura.xml/
+# Test Results/Coverage
+output/
+*.cobertura.xml
+
