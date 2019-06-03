@@ -37,14 +37,26 @@ jobs:
       inputs:
         artifactName: 'shopping-service'
         targetPath: 'ShoppingService.Api/bin/Release/netcoreapp2.2'
-# - deployment: DeployJob
-#   dependsOn: DevelopmentJob
-#   displayName: Deploy to Staging Job
-#   pool:
-#     vmImage: 'ubuntu-16.04'
-#   environment: staging
-#   strategy:
-#     runOnce:
-#       deploy:
-#         steps:
-#           - 
+- deployment: DeployJob
+  dependsOn: BuildAndPublishArtifact
+  displayName: Deploy to Staging Job
+  pool:
+    vmImage: 'ubuntu-16.04'
+  environment: staging
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - task: AzureRmWebAppDeployment@3
+            inputs:
+              # azureSubscription: '<Azure service connection>'
+              WebAppName: 'shopping-service'
+              DeployToSlotFlag: true
+              ResourceGroupName: 'Bewoogie'
+              SlotName: staging
+          - task: AzureAppServiceManage@0
+            inputs:
+              # azureSubscription: '<Azure service connection>'
+              WebAppName: 'shopping-service'
+              ResourceGroupName: 'Bewoogie'
+              SourceSlot: staging
