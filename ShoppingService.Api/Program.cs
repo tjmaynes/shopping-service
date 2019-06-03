@@ -17,8 +17,10 @@ namespace ShoppingService.Api
                 $"settings.{environment}.json"
             ).Build();
 
+            var dbConnectionString = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_DB_CONNECTION_STRING");
+
             WebApplicationBuilderFactory
-                .Initialize(args, configuration)
+                .Initialize(configuration, dbConnectionString)
                 .Build()
                 .Run();
         }

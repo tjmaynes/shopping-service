@@ -22,8 +22,10 @@ namespace ShoppingService.Api.Tests.Integration
                 $"settings.{environment}.json"
             ).Build();
 
-            _server = new TestServer(WebApplicationBuilderFactory.Initialize(
-                Environment.GetCommandLineArgs(), configuration));
+            var dbConnectionString = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_DB_CONNECTION_STRING");
+            var webHostBuilder = WebApplicationBuilderFactory.Initialize(configuration, dbConnectionString);
+
+            _server = new TestServer(webHostBuilder);
         }
 
         [Theory]

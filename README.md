@@ -45,6 +45,7 @@ TAG=<some-build-tag>
 To run the docker image, run the following command:
 ```bash
 make run_image \
+SHOPPING_SERVICE_DB_CONNECTION_STRING=<some-db-connection-string> \
 SHOPPING_SERVICE_ENVIRONMENT=<some-service-environment> \
 TAG=<some-build-tag>
 ```

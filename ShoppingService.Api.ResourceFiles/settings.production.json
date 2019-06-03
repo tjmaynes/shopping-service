@@ -1,23 +1,9 @@
 {
-  "ConnectionStrings": {
-    "ConnectionMode": "Azure",
-    "Azure": {
-      "ServiceEndpoint": "<YOUR SERVICE ENDPOINT URI>"
-    },
-    "Emulator": {
-      "ServiceEndpoint": "https://localhost:8081"
-    }
-  },
   "DocumentDb": {
     "DatabaseName": "shopping",
-    "ConnectionString": "mongodb://localhost:27017",
     "CollectionNames": {
       "Cart": "cartItems"
     }
-  },
-  "Secrets": {
-    "Mode": "UseMsi",
-    "KeyVaultUri": "<YOUR KEY VAULT URI>"
   },
   "Logging": {
     "LogLevel": {

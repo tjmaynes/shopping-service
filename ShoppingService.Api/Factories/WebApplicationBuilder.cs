@@ -16,19 +16,19 @@ namespace ShoppingService.Api.Factories
 {
     public static class WebApplicationBuilderFactory
     {
-        public static IWebHostBuilder Initialize(string[] args, IConfiguration configuration) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder Initialize(IConfiguration configuration, string dbConnectionString) =>
+            WebHost.CreateDefaultBuilder()
                 .UseConfiguration(configuration)
                 .ConfigureServices(services =>
                 {
                     services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
                     var documentDbOptions = configuration.GetSection("DocumentDb").Get<DocumentDbOptions>();
-                    var (connectionString, databaseName, collectionNames) = documentDbOptions;
+                    var (databaseName, collectionNames) = documentDbOptions;
 
                     // Cart Endpoint
                     services.AddSingleton<IDocumentDbClient<CartItem>>(MongoDbCollectionClient<CartItem>.Create(
-                        connectionString, databaseName, collectionNames["Cart"]
+                        dbConnectionString, databaseName, collectionNames["Cart"]
                     ));
                     services.AddScoped<IRepository<CartItem>, CartRepository>();
                     services.AddScoped<AbstractValidator<CartItem>, CartItemValidator>();
