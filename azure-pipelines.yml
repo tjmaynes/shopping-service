@@ -5,11 +5,16 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
     - bash: dotnet restore
+      displayName: Install Dependencies
     - bash: dotnet test
+      displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
         SHOPPING_SERVICE_DB_CONNECTION_STRING: $(SHOPPING_SERVICE_DB_CONNECTION_STRING)
+    - bash: dotnet publish -c Release -o dist
+      displayName: Build Artifact
     - task: PublishPipelineArtifact@0
+      displayName: Publish Artifact
       inputs:
         artifactName: 'shopping-service'
         targetPath: 'ShoppingService.Api/bin/Release/netcoreapp2.2'
