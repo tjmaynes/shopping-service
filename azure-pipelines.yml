@@ -1,7 +1,3 @@
-variables:
-  SHOPPING_SERVICE_ENVIRONMENT: production
-  SHOPPING_SERVICE_DB_CONNECTION_STRING: $env:SHOPPING_SERVICE_DB_CONNECTION_STRING
-
 jobs:
 - job: DevelopmentJob
   displayName: Build, Test, and Create Artifact Job
@@ -10,6 +6,9 @@ jobs:
   steps:
     - bash: dotnet restore
     - bash: dotnet test
+      env:
+        SHOPPING_SERVICE_ENVIRONMENT: production
+        SHOPPING_SERVICE_DB_CONNECTION_STRING: $(SHOPPING_SERVICE_DB_CONNECTION_STRING)
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: 'shopping-service'
