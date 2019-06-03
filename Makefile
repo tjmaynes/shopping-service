@@ -1,8 +1,8 @@
 IMAGE_NAME := shopping-service
 SHOPPING_SERVICE_ENVIRONMENT := development
-REGISTRY_USERNAME := ""
+REGISTRY_USERNAME := tjmaynes
 REGISTRY_PASSWORD := ""
-TAG := ""
+TAG := 0.1.0
 
 build_image: guard-REGISTRY_USERNAME guard-TAG
 	docker build --no-cache -t $(REGISTRY_USERNAME)/$(IMAGE_NAME):$(TAG) .

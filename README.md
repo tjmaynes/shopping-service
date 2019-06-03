@@ -31,25 +31,22 @@ make run_service
 
 To build the docker image, run the following command:
 ```bash
-REGISTRY_USERNAME=<some-docker-registry-username> \
-TAG=<some-build-tag> \
-make build_image
+make build_image TAG=<some-build-tag>
 ```
 
 To publish the docker image, run the following commands:
 ```bash
+make push_image \
 REGISTRY_USERNAME=<some-docker-registry-username> \
 REGISTRY_PASSWORD=<some-docker-registry-password> \
-TAG=<some-build-tag> \
-make push_image
+TAG=<some-build-tag>
 ```
 
 To run the docker image, run the following command:
 ```bash
-REGISTRY_USERNAME=<some-docker-registry-username> \
+make run_image \
 SHOPPING_SERVICE_ENVIRONMENT=<some-service-environment> \
-TAG=<some-build-tag> \
-make run_image
+TAG=<some-build-tag>
 ```
 
 ## Useful Links
