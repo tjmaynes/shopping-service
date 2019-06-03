@@ -11,12 +11,11 @@ jobs:
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
         SHOPPING_SERVICE_DB_CONNECTION_STRING: $(SHOPPING_SERVICE_DB_CONNECTION_STRING)
-    - task: PublishTestResults@2
+    - task: PublishCodeCoverageResults@1
       displayName: Publish Test Coverage
       inputs:
-        testResultsFormat: 'XUnit'
-        testResultsFiles: '**/*.cobertura.xml'
-        testRunTitle: 'Publish Test Results'
+        codeCoverageTool: cobertura
+        summaryFileLocation: $(System.DefaultWorkingDirectory)/**/*.cobertura.xml
 - job: BuildAndPublishArtifact
   dependsOn: RunTests
   displayName: Build and Publish Artifact
@@ -43,4 +42,3 @@ jobs:
 #       deploy:
 #         steps:
 #           - 
-
