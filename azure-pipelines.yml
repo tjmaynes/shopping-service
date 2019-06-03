@@ -6,7 +6,7 @@ jobs:
   steps:
     - bash: dotnet restore
       displayName: Install Dependencies
-    - bash: dotnet test --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
       displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
