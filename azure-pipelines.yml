@@ -10,7 +10,7 @@ jobs:
       displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
-        SHOPPING_SERVICE_DB_CONNECTION_STRING: $env:SHOPPING_SERVICE_DB_CONNECTION_STRING
+        SHOPPING_SERVICE_DB_CONNECTION_STRING: $(SHOPPING_SERVICE_DB_CONNECTION_STRING)
 - job: BuildAndPublishArtifact
   dependsOn: RunTests
   displayName: Build and Publish Artifact
