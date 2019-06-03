@@ -1,7 +1,7 @@
 {
   "DocumentDb": {
     "DatabaseName": "shopping",
-    "ConnectionString": "mongodb://localhost:27017",
+    "ConnectionString": "mongodb://host.docker.internal:27017",
     "CollectionNames": {
         "Cart": "cartItems"
     }
