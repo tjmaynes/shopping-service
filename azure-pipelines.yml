@@ -6,7 +6,7 @@ jobs:
   steps:
     - bash: dotnet restore
       displayName: Install Dependencies
-    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[xunit*]*" --test-adapter-path:. --logger "xunit;LogFileName=test_results.xml" --results-directory output
+    - bash: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[xunit*]*" --test-adapter-path:. --logger "xunit;LogFileName=TestResults.xml" --results-directory output
       displayName: Run Tests
       env:
         SHOPPING_SERVICE_ENVIRONMENT: production
@@ -15,7 +15,7 @@ jobs:
       displayName: Publish Test Results
       inputs:
         testResultsFormat: 'xUnit'
-        testResultsFiles: '**/test_results.xml'
+        testResultsFiles: '**/TestResults.xml'
         mergeTestResults: true
     - task: PublishCodeCoverageResults@1
       displayName: Publish Test Coverage
