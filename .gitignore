@@ -361,3 +361,6 @@ dist/
 output/
 *.cobertura.xml
 
+# Artifacts
+*.tar.gz
+*.zip

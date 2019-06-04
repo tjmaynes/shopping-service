@@ -44,13 +44,19 @@ test:
 	SHOPPING_SERVICE_ENVIRONMENT=$(SHOPPING_SERVICE_ENVIRONMENT) \
 	dotnet test \
 	/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[xunit*]*" \
-	 --test-adapter-path:. --logger "xunit;LogFileName=TestResults.xml" --results-directory output
+	--test-adapter-path:. --logger "xunit;LogFileName=TestResults.xml" --results-directory output
 
 run_service:
 	dotnet run --project ShoppingService.Api
 
 build_artifact:
 	dotnet publish -c Release -o dist
+
+archive_artifact: build_artifact
+	cd ShoppingService.Api && zip -r ../ShoppingServiceArtifact.zip dist
+
+extract_artifact:
+	unzip ShoppingServiceArtifact.zip
 
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \

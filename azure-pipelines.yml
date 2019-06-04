@@ -32,34 +32,40 @@ jobs:
       displayName: Install Dependencies
     - bash: make build_artifact
       displayName: Build Artifact
+    - bash: make archive_artifact
+      displayName: Archive Artifact
     - task: PublishPipelineArtifact@0
       displayName: Publish Artifact
       inputs:
         artifactName: 'shopping-service'
-        targetPath: 'ShoppingService.Api/bin/Release/netcoreapp2.2'
+        targetPath: 'ShoppingServiceArtifact.zip'
 - deployment: DeployJob
   dependsOn: BuildAndPublishArtifact
-  displayName: Deploy to Staging Job
+  displayName: Deploy to Production Job
   pool:
     vmImage: 'ubuntu-16.04'
-  environment: staging
+  environment: production
   strategy:
     runOnce:
       deploy:
         steps:
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'shopping-service'
+              targetPath: $(System.DefaultWorkingDirectory)
           - task: AzureRmWebAppDeployment@4
             inputs:
               ConnectionType: 'AzureRM'
               azureSubscription: $(AZURE_SERVICE_CONNECTION)
-              appType: 'apiApp'
-              WebAppName: 'shopping-service'
+              appType: apiApp
+              WebAppName: shopping-service
               deployToSlotOrASE: true
-              ResourceGroupName: 'Bewoogie'
-              SlotName: 'staging'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              ResourceGroupName: Bewoogie
+              SlotName: production
+              packageForLinux: '$(System.DefaultWorkingDirectory)/ShoppingServiceArtifact.zip'
           - task: AzureAppServiceManage@0
             inputs:
               azureSubscription: $(AZURE_SERVICE_CONNECTION)
               WebAppName: 'shopping-service'
               ResourceGroupName: 'Bewoogie'
-              SourceSlot: staging
+              SourceSlot: production
