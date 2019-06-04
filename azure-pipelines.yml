@@ -47,16 +47,19 @@ jobs:
     runOnce:
       deploy:
         steps:
-          - task: AzureRmWebAppDeployment@3
+          - task: AzureRmWebAppDeployment@4
             inputs:
-              # azureSubscription: '<Azure service connection>'
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
+              appType: 'apiApp'
               WebAppName: 'shopping-service'
-              DeployToSlotFlag: true
+              deployToSlotOrASE: true
               ResourceGroupName: 'Bewoogie'
-              SlotName: staging
+              SlotName: 'staging'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
           - task: AzureAppServiceManage@0
             inputs:
-              # azureSubscription: '<Azure service connection>'
+              azureSubscription: $(AZURE_SERVICE_CONNECTION)
               WebAppName: 'shopping-service'
               ResourceGroupName: 'Bewoogie'
               SourceSlot: staging
