@@ -37,7 +37,7 @@ jobs:
     - task: PublishPipelineArtifact@0
       displayName: Publish Artifact
       inputs:
-        artifactName: 'shopping-service'
+        artifactName: 'learning-csharp'
         targetPath: 'ShoppingServiceArtifact.zip'
 - deployment: DeployJob
   dependsOn: BuildAndPublishArtifact
@@ -49,23 +49,19 @@ jobs:
     runOnce:
       deploy:
         steps:
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: 'shopping-service'
-              targetPath: $(System.DefaultWorkingDirectory)
-          - task: AzureRmWebAppDeployment@4
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: $(AZURE_SERVICE_CONNECTION)
-              appType: apiApp
-              WebAppName: shopping-service
-              deployToSlotOrASE: true
-              ResourceGroupName: Bewoogie
-              SlotName: production
-              packageForLinux: '$(System.DefaultWorkingDirectory)/ShoppingServiceArtifact.zip'
-          - task: AzureAppServiceManage@0
-            inputs:
-              azureSubscription: $(AZURE_SERVICE_CONNECTION)
-              WebAppName: 'shopping-service'
-              ResourceGroupName: 'Bewoogie'
-              SourceSlot: production
+          # - task: AzureRmWebAppDeployment@4
+          #   inputs:
+          #     ConnectionType: 'AzureRM'
+          #     azureSubscription: $(AZURE_SERVICE_CONNECTION)
+          #     appType: apiApp
+          #     WebAppName: learning-csharp
+          #     deployToSlotOrASE: true
+          #     ResourceGroupName: $(AZURE_RESOURCE_GROUP_NAME)
+          #     SlotName: production
+          #     packageForLinux: '$(System.DefaultWorkingDirectory)/ShoppingServiceArtifact.zip'
+          # - task: AzureAppServiceManage@0
+          #   inputs:
+          #     azureSubscription: $(AZURE_SERVICE_CONNECTION)
+          #     WebAppName: 'learning-csharp'
+          #     ResourceGroupName: $(AZURE_RESOURCE_GROUP_NAME)
+          #     SourceSlot: production

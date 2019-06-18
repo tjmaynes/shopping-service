@@ -2,7 +2,7 @@
 
 > Learning .NET Core 2.2 by building a shopping service.
 
-[![Build Status](https://tjmaynes.visualstudio.com/shopping-service/_apis/build/status/tjmaynes.shopping-service?branchName=master)](https://tjmaynes.visualstudio.com/shopping-service/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://tjmaynes.visualstudio.com/learning-projects/_apis/build/status/tjmaynes.learning-csharp?branchName=master)](https://tjmaynes.visualstudio.com/learning-projects/_build/latest?definitionId=4&branchName=master)
 
 ## Requirements
 
