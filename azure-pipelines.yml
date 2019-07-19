@@ -39,29 +39,3 @@ jobs:
       inputs:
         artifactName: 'learning-csharp'
         targetPath: 'ShoppingServiceArtifact.zip'
-- deployment: DeployJob
-  dependsOn: BuildAndPublishArtifact
-  displayName: Deploy to Production Job
-  pool:
-    vmImage: 'ubuntu-16.04'
-  environment: production
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          # - task: AzureRmWebAppDeployment@4
-          #   inputs:
-          #     ConnectionType: 'AzureRM'
-          #     azureSubscription: $(AZURE_SERVICE_CONNECTION)
-          #     appType: apiApp
-          #     WebAppName: learning-csharp
-          #     deployToSlotOrASE: true
-          #     ResourceGroupName: $(AZURE_RESOURCE_GROUP_NAME)
-          #     SlotName: production
-          #     packageForLinux: '$(System.DefaultWorkingDirectory)/ShoppingServiceArtifact.zip'
-          # - task: AzureAppServiceManage@0
-          #   inputs:
-          #     azureSubscription: $(AZURE_SERVICE_CONNECTION)
-          #     WebAppName: 'learning-csharp'
-          #     ResourceGroupName: $(AZURE_RESOURCE_GROUP_NAME)
-          #     SourceSlot: production
