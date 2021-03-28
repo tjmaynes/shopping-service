@@ -1,0 +1,14 @@
+{
+  "DocumentDb": {
+    "DatabaseName": "shopping-cart",
+    "CollectionNames": {
+      "Cart": "cartItems"
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}

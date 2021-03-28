@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  ship_it:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: shopping-cart
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.200
+      - uses: 5monkeys/cobertura-action@master
+        with:
+          path: '**/TestResults.xml'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          minimum_coverage: 90
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: false
+          files: |
+            LICENSE
+            README.md
+            ShoppingCartAPI.zip
+      - name: 🔨 Install Dependencies 🔨
+        run: sudo apt-get update && sudo apt-get install make
+      - name: 🚀 Ship it 🚀
+        run: make ship_it

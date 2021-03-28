@@ -1,12 +1,11 @@
-FROM microsoft/dotnet:sdk AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
 WORKDIR /app
+COPY . .
+RUN apt-get update && apt-get install -y --no-install-recommends make
+RUN make build_artifact
 
-COPY . ./
-
-RUN dotnet publish -c Release -o dist
-
-FROM microsoft/dotnet:aspnetcore-runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
-COPY --from=build-env /app/ShoppingService.Api/dist .
+COPY --from=build-env /app/dist .
 ENV ASPNETCORE_URLS http://+:80
 ENTRYPOINT ["dotnet", "ShoppingService.Api.dll"]

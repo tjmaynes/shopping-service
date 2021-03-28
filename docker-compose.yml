@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  shopping-cart-api:
+    build: .
+    restart: always
+    networks:
+      - shopping-cart-network
+    ports:
+      - "8080:80"
+    depends_on:
+      - shopping-cart-db
+    env_file:
+      - .env.development
+
+  shopping-cart-db:
+    image: "postgres:9.5.14-alpine"
+    restart: always
+    volumes:
+      - shopping-cart-volume:/var/lib/postgresql/data/
+    networks:
+      - shopping-cart-network 
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.development
+
+volumes:
+  shopping-cart-volume:
+
+networks:
+  shopping-cart-network:

@@ -1,6 +1,6 @@
-bin/
-obj/
-README.markdown
+**/bin
+**/obj
+README.md
 Dockerfile
 .vscode/
 .git/

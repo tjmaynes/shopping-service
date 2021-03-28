@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LanguageExt.Core" Version="3.1.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingService.Core\ShoppingService.Core.csproj" />
+    <ProjectReference Include="..\ShoppingService.Infrastructure\ShoppingService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\ShoppingService.Api.ResourceFiles\settings.production.json" Link="settings.production.json" CopyToOutputDirectory="Always" />
+    <Content Include="..\ShoppingService.Api.ResourceFiles\settings.development.json" Link="settings.development.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>
