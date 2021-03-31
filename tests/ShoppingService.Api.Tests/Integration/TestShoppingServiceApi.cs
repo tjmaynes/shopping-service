@@ -1,37 +1,22 @@
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
-using ShoppingService.Api.Factories;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace ShoppingService.Api.Tests.Integration
 {
-    public class TestShoppingServiceApi
+    public class TestShoppingServiceApi : IClassFixture<WebApplicationFactory<ShoppingService.Api.Startup>>
     {
-        private readonly TestServer _server;
+        private readonly WebApplicationFactory<ShoppingService.Api.Startup> _factory;
 
-        public TestShoppingServiceApi() {
-            var environment = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_ENVIRONMENT");
-            var configuration = AppConfigurationBuilder.Initialize(
-                Directory.GetCurrentDirectory(),
-                $"settings.{environment}.json"
-            ).Build();
-
-            var dbConnectionString = Environment.GetEnvironmentVariable("SHOPPING_SERVICE_DB_CONNECTION_STRING");
-            var webHostBuilder = WebApplicationBuilderFactory.Initialize(configuration, dbConnectionString);
-
-            _server = new TestServer(webHostBuilder);
+        public TestShoppingServiceApi(WebApplicationFactory<ShoppingService.Api.Startup> factory)
+        {
+            _factory = factory;
         }
 
         [Fact]
         public async Task Get_WhenCalled_ReturnsOkResult()
         {
-            var client = _server.CreateClient();
+            var client = _factory.CreateClient();
             var httpResponse = await client.GetAsync("/api/cart");
             httpResponse.EnsureSuccessStatusCode();
 
@@ -39,10 +24,10 @@ namespace ShoppingService.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task GetById_WhenCalled_ReturnsOkResult(string url)
+        public async Task GetById_WhenCalled_ReturnsOkResult()
         {
-            var client = _server.CreateClient();
-            var httpResponse = await client.GetAsync("/api/cart");
+            var client = _factory.CreateClient();
+            var httpResponse = await client.GetAsync("/api/cart/1");
             httpResponse.EnsureSuccessStatusCode();
 
             Assert.Equal("application/json; charset=utf-8", httpResponse.Content.Headers.ContentType.ToString());

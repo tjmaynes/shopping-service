@@ -24,9 +24,4 @@
     <ProjectReference Include="..\..\src\ShoppingService.Core\ShoppingService.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="..\..\src\ShoppingService.Api.ResourceFiles\settings.production.json" Link="settings.production.json" CopyToOutputDirectory="Always" />
-    <Content Include="..\..\src\ShoppingService.Api.ResourceFiles\settings.development.json" Link="settings.development.json" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-
 </Project>

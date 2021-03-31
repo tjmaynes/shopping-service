@@ -1,26 +1,21 @@
 using System;
 using System.Linq;
-using ShoppingService.Core.Cart;
 using ShoppingService.Core.Common;
-using ShoppingService.Infrastructure.Data.Clients;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace ShoppingService.Infrastructure.Data.Repositories
-{
+namespace ShoppingService.Core.Cart {
     public class CartRepository : IRepository<CartItem>
     {
-        private readonly IDocumentDbClient<CartItem> _dbClient;
+        private readonly IDatabaseClient<CartItem> _databaseClient;
 
-        public CartRepository(IDocumentDbClient<CartItem> dbClient)
+        public CartRepository(IDatabaseClient<CartItem> databaseClient)
         {
-            _dbClient = dbClient ?? throw new ArgumentNullException(nameof(dbClient));
+            _databaseClient = databaseClient ?? throw new ArgumentNullException(nameof(databaseClient));
         }
 
-        public EitherAsync<Exception, Option<PagedResult<CartItem>>> GetAll(
-            int pageNumber = 0, int pageSize = 200
-        ) =>
-            match(_dbClient.GetDocumentsAsync(pageNumber, pageSize),
+        public EitherAsync<Exception, Option<PagedResult<CartItem>>> GetAll(int pageNumber = 0, int pageSize = 200) =>
+            match(_databaseClient.GetItems(pageNumber, pageSize),
                 Some: items => {
                     var totalCount = items.Count();
                     var totalPages = (long)Math.Ceiling((double)(totalCount / pageSize));
@@ -32,28 +27,28 @@ namespace ShoppingService.Infrastructure.Data.Repositories
             ).ToAsync();
 
         public EitherAsync<Exception, Option<CartItem>> Add(CartItem newItem) =>
-            match(_dbClient.CreateDocumentAsync(newItem),
+            match(_databaseClient.AddItem(newItem),
                 Some: item => Right<Exception, Option<CartItem>>(Some(item)),
                 None: () => Right<Exception, Option<CartItem>>(Some(newItem)),
                 Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, Option<CartItem>> GetById(string id) =>
-            match(_dbClient.GetDocumentByIdAsync((item => item.Id == id)),
+        public EitherAsync<Exception, Option<CartItem>> GetById(Guid id) =>
+            match(_databaseClient.GetItemById((item => item.Id == id)),
                 Some: item => Right<Exception, Option<CartItem>>(Some(item)),
                 None: () => Right<Exception, Option<CartItem>>(None),
                 Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
         public EitherAsync<Exception, Option<CartItem>> Update(CartItem updatedItem) =>
-            match(_dbClient.ReplaceDocumentAsync((item => item.Id == updatedItem.Id), updatedItem),
+            match(_databaseClient.ReplaceItem(item => item.Id == updatedItem.Id, updatedItem),
                 Some: item => Right<Exception, Option<CartItem>>(Some(item)),
                 None: () => Right<Exception, Option<CartItem>>(None),
                 Fail: ex => Left<Exception, Option<CartItem>>(ex)
             ).ToAsync();
 
-        public EitherAsync<Exception, Option<CartItem>> Remove(string id) =>
-            match(_dbClient.DeleteDocumentAsync((item => item.Id == id)),
+        public EitherAsync<Exception, Option<CartItem>> Remove(Guid id) =>
+            match(_databaseClient.DeleteItem((item => item.Id == id)),
                 Some: item => Right<Exception, Option<CartItem>>(Some(item)),
                 None: () => Right<Exception, Option<CartItem>>(None),
                 Fail: ex => Left<Exception, Option<CartItem>>(ex)

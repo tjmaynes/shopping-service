@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using ShoppingService.Core.Common;
@@ -12,19 +11,19 @@ namespace ShoppingService.Core.Cart
 {
     public class CartService : ICartService
     {
-        private readonly IRepository<CartItem> Repository;
-        private readonly AbstractValidator<CartItem> Validator;
+        private readonly IRepository<CartItem> _repository;
+        private readonly AbstractValidator<CartItem> _validator;
 
         public CartService(IRepository<CartItem> repository, AbstractValidator<CartItem> validator)
         {
-            Repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            Validator = validator ?? throw new ArgumentNullException(nameof(validator));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
         }
 
         public EitherAsync<ServiceError, PagedResult<CartItem>> GetItemsFromCart(
             int currentPage = 0, int pageSize = 40
         ) =>
-            match(Repository.GetAll(currentPage, pageSize),
+            match(_repository.GetAll(currentPage, pageSize),
                 Right: option => match(option,
                     Some: items => Right<ServiceError, PagedResult<CartItem>>(items),
                     None: () => Right<ServiceError, PagedResult<CartItem>>(PagedResult<CartItem>.CreateEmptyResult())),
@@ -33,9 +32,9 @@ namespace ShoppingService.Core.Cart
 
         public EitherAsync<ServiceError, CartItem> AddItemToCart(CartItem newItem)
         {
-            var result = Validator.Validate(newItem);
+            var result = _validator.Validate(newItem);
             if (result.IsValid) {
-                return match(Repository.Add(newItem),
+                return match(_repository.Add(newItem),
                      Right: option => match(option,
                         Some: item => Right<ServiceError, CartItem>(item),
                         None: () => Right<ServiceError, CartItem>(newItem)),
@@ -52,7 +51,7 @@ namespace ShoppingService.Core.Cart
         }
 
         public EitherAsync<ServiceError, CartItem> GetItemById(string id) =>
-            match(Repository.GetById(id),
+            match(_repository.GetById(id),
                 Right: option => match(option,
                     Some: item => Right<ServiceError, CartItem>(item),
                     None: () => Left<ServiceError, CartItem>(new ServiceError("Item not found!", ServiceErrorCode.ItemNotFound))),
@@ -61,9 +60,9 @@ namespace ShoppingService.Core.Cart
 
         public EitherAsync<ServiceError, CartItem> UpdateItemInCart(CartItem updatedItem)
         {
-            var result = Validator.Validate(updatedItem);
+            var result = _validator.Validate(updatedItem);
             if (result.IsValid) {
-                return match(Repository.Update(updatedItem),
+                return match(_repository.Update(updatedItem),
                      Right: option => match(option,
                         Some: item => Right<ServiceError, CartItem>(item),
                         None: () => Right<ServiceError, CartItem>(updatedItem)),
@@ -80,7 +79,7 @@ namespace ShoppingService.Core.Cart
         }
 
         public EitherAsync<ServiceError, string> RemoveItemFromCart(string id) =>
-            match(Repository.Remove(id),
+            match(_repository.Remove(id),
                 Right: option => match(option,
                     Some: item => Right<ServiceError, string>(item.Id),
                     None: () => Right<ServiceError, string>(id)),
